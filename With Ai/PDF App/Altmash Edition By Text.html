@@ -1,0 +1,337 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Altmash Edition By Text</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#0b0e14;
+    --bg-soft:#10131c;
+    --panel:#13161f;
+    --panel-2:#171b26;
+    --border:#242838;
+    --gold:#d4af37;
+    --gold-soft:#f0d98c;
+    --text:#eef0f5;
+    --text-dim:#9aa1b4;
+    --accent:#6c7bff;
+    --success:#3ddc97;
+    --shadow: 0 10px 40px rgba(0,0,0,0.5);
+  }
+  @media (prefers-color-scheme: light){
+    :root:not([data-theme="dark"]){
+      --bg:#f4f1ea;
+      --bg-soft:#ffffff;
+      --panel:#ffffff;
+      --panel-2:#f8f6f0;
+      --border:#e3ddcb;
+      --text:#1c1c1c;
+      --text-dim:#6b6457;
+      --shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0b0e14; --bg-soft:#10131c; --panel:#13161f; --panel-2:#171b26;
+    --border:#242838; --text:#eef0f5; --text-dim:#9aa1b4; --shadow:0 10px 40px rgba(0,0,0,0.5);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 10% -10%, rgba(212,175,55,0.08), transparent 40%),
+      radial-gradient(circle at 90% 0%, rgba(108,123,255,0.08), transparent 40%),
+      var(--bg);
+    color:var(--text);
+    font-family:'Segoe UI', 'Poppins', system-ui, -apple-system, sans-serif;
+    min-height:100vh;
+    padding:24px 16px 60px;
+  }
+  .wrap{max-width:980px;margin:0 auto;}
+  header{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:16px;flex-wrap:wrap;margin-bottom:28px;
+  }
+  .brand{display:flex;align-items:center;gap:14px;}
+  .logo{
+    width:46px;height:46px;border-radius:12px;
+    background:linear-gradient(135deg,var(--gold),#b8860b);
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;color:#1a1200;font-size:20px;
+    box-shadow:0 4px 18px rgba(212,175,55,0.4);
+    flex-shrink:0;
+  }
+  .brand h1{
+    margin:0;font-size:20px;letter-spacing:0.3px;
+    background:linear-gradient(90deg,var(--gold-soft),var(--gold));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .brand p{margin:2px 0 0;font-size:12.5px;color:var(--text-dim);}
+  .theme-toggle{
+    background:var(--panel);border:1px solid var(--border);color:var(--text);
+    padding:8px 14px;border-radius:10px;cursor:pointer;font-size:13px;
+  }
+
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:16px;
+    box-shadow:var(--shadow);
+    overflow:hidden;
+  }
+
+  .toolbar{
+    display:flex;flex-wrap:wrap;gap:6px;
+    padding:12px 14px;
+    background:var(--panel-2);
+    border-bottom:1px solid var(--border);
+  }
+  .toolbar button, .toolbar select, .toolbar input[type=color]{
+    background:var(--bg-soft);
+    border:1px solid var(--border);
+    color:var(--text);
+    border-radius:8px;
+    padding:7px 10px;
+    font-size:13px;
+    cursor:pointer;
+    transition:.15s ease;
+  }
+  .toolbar button:hover{border-color:var(--gold);color:var(--gold-soft);}
+  .toolbar button.active{background:var(--gold);color:#1a1200;border-color:var(--gold);}
+  .toolbar input[type=color]{width:38px;padding:3px;}
+  .toolbar select{min-width:90px;}
+  .sep{width:1px;background:var(--border);margin:2px 4px;}
+
+  .editor-area{
+    padding:28px 32px;
+    background:var(--bg-soft);
+  }
+  #editor{
+    min-height:520px;
+    background:#ffffff;
+    color:#1b1b1b;
+    border-radius:4px;
+    padding:48px 52px;
+    box-shadow:0 0 0 1px rgba(0,0,0,0.06), 0 18px 40px rgba(0,0,0,0.25);
+    font-size:15px;
+    line-height:1.7;
+    outline:none;
+    max-width:794px;
+    margin:0 auto;
+  }
+  #editor:empty:before{
+    content: attr(data-placeholder);
+    color:#9a9a9a;
+  }
+  #editor table{border-collapse:collapse;}
+  #editor img{max-width:100%;}
+
+  .footer-actions{
+    display:flex;gap:10px;flex-wrap:wrap;align-items:center;
+    padding:16px 32px 28px;
+    justify-content:space-between;
+  }
+  .meta{display:flex;gap:16px;flex-wrap:wrap;align-items:center;}
+  .meta label{font-size:12.5px;color:var(--text-dim);display:flex;gap:6px;align-items:center;}
+  .meta input, .meta select{
+    background:var(--bg-soft);border:1px solid var(--border);color:var(--text);
+    border-radius:8px;padding:6px 9px;font-size:13px;
+  }
+
+  .btn{
+    border:none;border-radius:10px;padding:11px 20px;font-size:14px;font-weight:600;
+    cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:.15s ease;
+  }
+  .btn-primary{
+    background:linear-gradient(135deg,var(--gold-soft),var(--gold));
+    color:#1a1200;
+    box-shadow:0 6px 20px rgba(212,175,55,0.35);
+  }
+  .btn-primary:hover{transform:translateY(-1px);box-shadow:0 10px 26px rgba(212,175,55,0.45);}
+  .btn-ghost{
+    background:transparent;border:1px solid var(--border);color:var(--text);
+  }
+  .btn-ghost:hover{border-color:var(--gold);color:var(--gold-soft);}
+
+  .status{
+    font-size:12.5px;color:var(--success);min-height:16px;margin-top:8px;
+    padding:0 32px 10px;
+  }
+
+  @media (max-width:640px){
+    #editor{padding:26px 20px;}
+    .editor-area{padding:18px 14px;}
+    .footer-actions{padding:14px 16px 22px;flex-direction:column;align-items:stretch;}
+    .meta{flex-direction:column;align-items:flex-start;gap:8px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="logo">A</div>
+      <div>
+        <h1>Altmash Edition By Text</h1>
+        <p>Paste or write text &middot; format it &middot; export a professional, editable PDF</p>
+      </div>
+    </div>
+    <button class="theme-toggle" id="themeToggle">🌓 Toggle theme</button>
+  </header>
+
+  <div class="panel">
+    <div class="toolbar">
+      <select id="fontName">
+        <option value="Georgia, serif">Georgia</option>
+        <option value="'Times New Roman', serif">Times New Roman</option>
+        <option value="Arial, sans-serif">Arial</option>
+        <option value="'Segoe UI', sans-serif" selected>Segoe UI</option>
+        <option value="'Courier New', monospace">Courier New</option>
+      </select>
+      <select id="fontSize">
+        <option value="1">Small</option>
+        <option value="3" selected>Normal</option>
+        <option value="5">Large</option>
+        <option value="7">XL</option>
+      </select>
+      <div class="sep"></div>
+      <button data-cmd="bold"><b>B</b></button>
+      <button data-cmd="italic"><i>I</i></button>
+      <button data-cmd="underline"><u>U</u></button>
+      <div class="sep"></div>
+      <button data-cmd="justifyLeft">⬅</button>
+      <button data-cmd="justifyCenter">↔</button>
+      <button data-cmd="justifyRight">➡</button>
+      <div class="sep"></div>
+      <button data-cmd="insertUnorderedList">• List</button>
+      <button data-cmd="insertOrderedList">1. List</button>
+      <div class="sep"></div>
+      <input type="color" id="textColor" value="#1b1b1b" title="Text color">
+      <div class="sep"></div>
+      <button id="pasteBtn">📋 Paste</button>
+      <button id="clearBtn">🗑 Clear</button>
+    </div>
+
+    <div class="editor-area">
+      <div id="editor" contenteditable="true" data-placeholder="Start typing or paste your text here..."></div>
+    </div>
+
+    <div class="meta">
+      <label style="padding:0 32px;">Document title
+        <input type="text" id="docTitle" value="My Document" style="margin-left:6px;">
+      </label>
+    </div>
+
+    <div class="footer-actions">
+      <div class="meta">
+        <label>Page size
+          <select id="pageSize">
+            <option value="a4" selected>A4</option>
+            <option value="letter">Letter</option>
+          </select>
+        </label>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-ghost" id="printBtn">🖨 Print</button>
+        <button class="btn btn-primary" id="exportBtn">⬇ Download as PDF</button>
+      </div>
+    </div>
+    <div class="status" id="status"></div>
+  </div>
+</div>
+
+<script>
+const editor = document.getElementById('editor');
+
+document.querySelectorAll('.toolbar button[data-cmd]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    editor.focus();
+    document.execCommand(btn.dataset.cmd, false, null);
+  });
+});
+
+document.getElementById('fontName').addEventListener('change', (e)=>{
+  editor.focus();
+  document.execCommand('fontName', false, e.target.value);
+});
+document.getElementById('fontSize').addEventListener('change', (e)=>{
+  editor.focus();
+  document.execCommand('fontSize', false, e.target.value);
+});
+document.getElementById('textColor').addEventListener('input', (e)=>{
+  editor.focus();
+  document.execCommand('foreColor', false, e.target.value);
+});
+
+document.getElementById('clearBtn').addEventListener('click', ()=>{
+  if(confirm('Clear all content?')){ editor.innerHTML = ''; }
+});
+
+document.getElementById('pasteBtn').addEventListener('click', async ()=>{
+  try{
+    const text = await navigator.clipboard.readText();
+    editor.focus();
+    document.execCommand('insertText', false, text);
+  }catch(err){
+    editor.focus();
+    showStatus('Click inside the box and use Ctrl+V / Cmd+V to paste.', true);
+  }
+});
+
+document.getElementById('printBtn').addEventListener('click', ()=>{
+  window.print();
+});
+
+document.getElementById('themeToggle').addEventListener('click', ()=>{
+  const root = document.documentElement;
+  const current = root.getAttribute('data-theme');
+  root.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+});
+
+function showStatus(msg, isWarn){
+  const s = document.getElementById('status');
+  s.textContent = msg;
+  s.style.color = isWarn ? '#e8a33d' : 'var(--success)';
+  setTimeout(()=>{ s.textContent=''; }, 4000);
+}
+
+document.getElementById('exportBtn').addEventListener('click', ()=>{
+  const { jsPDF } = window.jspdf;
+  const pageSize = document.getElementById('pageSize').value;
+  const title = document.getElementById('docTitle').value || 'document';
+
+  const doc = new jsPDF({
+    orientation: 'portrait',
+    unit: 'pt',
+    format: pageSize
+  });
+
+  doc.html(editor, {
+    callback: function (doc) {
+      doc.save(title.replace(/[^a-z0-9\-_ ]/gi,'').trim() + '.pdf');
+      showStatus('PDF downloaded — fully editable text, ready to share or print.');
+    },
+    x: 40,
+    y: 40,
+    width: pageSize === 'a4' ? 515 : 530,
+    windowWidth: 794,
+    autoPaging: 'text'
+  });
+});
+
+// try to load a saved draft
+try{
+  const saved = localStorage.getItem('altmash_draft');
+  if(saved) editor.innerHTML = saved;
+}catch(e){}
+
+editor.addEventListener('input', ()=>{
+  try{ localStorage.setItem('altmash_draft', editor.innerHTML); }catch(e){}
+});
+</script>
+</body>
+</html>
+
+</body></html>

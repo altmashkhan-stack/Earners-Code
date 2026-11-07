@@ -1,0 +1,765 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<title>Altmash Edition</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* ── tokens ─────────────────────────────── */
+:root {
+  --bg:       #09090f;
+  --surface:  #0e0f17;
+  --card:     #13141f;
+  --line:     #222436;
+  --muted:    #3a3d52;
+  --dim:      #848ba6;
+  --txt:      #e8eaf4;
+  --gold:     #c8a84b;
+  --gold-hi:  #e8cc7a;
+  --gold-dk:  #8c7330;
+  --green:    #4dbb92;
+  --warn:     #e0924a;
+  --r: 14px;
+  --r-sm: 9px;
+  --fs: 13.5px;
+}
+[data-theme="light"] {
+  --bg:      #f5f2eb;
+  --surface: #ede9e0;
+  --card:    #ffffff;
+  --line:    #ddd9cc;
+  --muted:   #c8c3b4;
+  --dim:     #7c7668;
+  --txt:     #1e1c18;
+}
+/* ── reset ──────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: var(--fs);
+  color: var(--txt);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* ── layout ─────────────────────────────── */
+.app { display: flex; flex-direction: column; min-height: 100vh; }
+
+/* ── topbar ─────────────────────────────── */
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+  position: sticky; top: 0; z-index: 50;
+}
+.brand { display: flex; align-items: center; gap: 11px; }
+.logo-mark {
+  width: 36px; height: 36px;
+  background: linear-gradient(140deg, var(--gold-hi) 0%, var(--gold) 60%, var(--gold-dk) 100%);
+  border-radius: 10px;
+  display: grid; place-items: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 18px; font-weight: 700; color: #1a1200;
+  box-shadow: 0 4px 14px rgba(200,168,75,.3);
+  flex-shrink: 0;
+}
+.brand-text { display: flex; flex-direction: column; gap: 1px; }
+.brand-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 17px; font-weight: 700; letter-spacing: .3px;
+  background: linear-gradient(90deg, var(--gold-hi), var(--gold));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.brand-sub { font-size: 11.5px; color: var(--dim); letter-spacing: .2px; }
+
+.topbar-right { display: flex; gap: 8px; align-items: center; }
+.icon-btn {
+  background: transparent; border: 1px solid var(--line);
+  color: var(--dim); border-radius: var(--r-sm);
+  padding: 7px 12px; font-size: 12.5px; font-family: 'Inter', sans-serif;
+  cursor: pointer; transition: border-color .15s, color .15s;
+}
+.icon-btn:hover { border-color: var(--gold); color: var(--gold-hi); }
+
+/* ── main split ─────────────────────────── */
+.main { display: flex; flex: 1; gap: 0; }
+
+/* ── sidebar ─────────────────────────────── */
+.sidebar {
+  width: 220px; flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--line);
+  padding: 20px 14px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.sidebar-section { font-size: 11px; color: var(--muted); letter-spacing: .8px; text-transform: uppercase; margin: 10px 0 4px 4px; }
+.sidebar-section:first-child { margin-top: 0; }
+
+.field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 4px; }
+.field label { font-size: 11.5px; color: var(--dim); }
+.field input, .field select {
+  background: var(--card); border: 1px solid var(--line);
+  color: var(--txt); border-radius: var(--r-sm);
+  padding: 8px 10px; font-size: 13px; font-family: 'Inter', sans-serif;
+  outline: none; transition: border-color .15s;
+  width: 100%;
+}
+.field input:focus, .field select:focus { border-color: var(--gold); }
+
+.sidebar-divider { height: 1px; background: var(--line); margin: 6px 0; }
+
+.action-btn {
+  width: 100%; border: none; border-radius: var(--r-sm);
+  padding: 10px 14px; font-size: 13px; font-family: 'Inter', sans-serif;
+  font-weight: 600; cursor: pointer; transition: all .15s;
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+}
+.action-btn.primary {
+  background: linear-gradient(135deg, var(--gold-hi), var(--gold) 70%, var(--gold-dk));
+  color: #1a1100;
+  box-shadow: 0 6px 18px rgba(200,168,75,.28);
+  margin-top: 4px;
+}
+.action-btn.primary:hover { box-shadow: 0 8px 24px rgba(200,168,75,.42); transform: translateY(-1px); }
+.action-btn.primary:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+.action-btn.ghost { background: transparent; border: 1px solid var(--line); color: var(--txt); }
+.action-btn.ghost:hover { border-color: var(--gold); color: var(--gold-hi); }
+
+/* ── editor pane ─────────────────────────── */
+.editor-pane { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+/* toolbar */
+.toolbar {
+  display: flex; flex-wrap: wrap; gap: 4px; align-items: center;
+  padding: 9px 16px;
+  background: var(--card);
+  border-bottom: 1px solid var(--line);
+}
+.t-btn {
+  background: transparent; border: 1px solid transparent;
+  color: var(--dim); border-radius: 7px;
+  width: 30px; height: 30px;
+  display: grid; place-items: center;
+  cursor: pointer; font-size: 13.5px; transition: all .12s;
+  flex-shrink: 0;
+}
+.t-btn:hover { background: var(--surface); border-color: var(--line); color: var(--txt); }
+.t-btn.on { background: var(--gold); border-color: var(--gold); color: #1a1100; }
+.t-sep { width: 1px; height: 20px; background: var(--line); margin: 0 2px; flex-shrink: 0; }
+.t-select {
+  background: var(--surface); border: 1px solid var(--line);
+  color: var(--txt); border-radius: 7px;
+  padding: 4px 7px; font-size: 12.5px; font-family: 'Inter', sans-serif;
+  cursor: pointer; height: 30px; outline: none;
+}
+.t-select:focus { border-color: var(--gold); }
+.t-color { width: 30px; height: 30px; padding: 2px; border-radius: 7px; border: 1px solid var(--line); cursor: pointer; background: var(--surface); }
+
+/* canvas */
+.canvas-wrap {
+  flex: 1; overflow-y: auto;
+  background: var(--surface);
+  padding: 32px 40px;
+  display: flex; flex-direction: column; align-items: center;
+}
+#editor {
+  width: 100%; max-width: 740px;
+  min-height: 600px;
+  background: #ffffff; color: #1a1a1a;
+  border-radius: 4px;
+  padding: 56px 64px;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.06), 0 24px 60px rgba(0,0,0,.35);
+  font-family: 'Lora', Georgia, serif;
+  font-size: 16px; line-height: 1.8;
+  outline: none;
+  overflow-wrap: break-word; word-break: break-word;
+  transition: box-shadow .2s;
+}
+#editor:focus {
+  box-shadow: 0 0 0 1px rgba(0,0,0,.06),
+              0 0 0 3px rgba(200,168,75,.22),
+              0 24px 60px rgba(0,0,0,.35);
+}
+#editor:empty::before {
+  content: attr(data-ph);
+  color: #aaa; pointer-events: none;
+  font-style: italic;
+}
+#editor ul, #editor ol { padding-left: 24px; margin: 8px 0; }
+#editor p + p { margin-top: 8px; }
+#editor blockquote { border-left: 3px solid #ddd; margin: 8px 0; padding: 4px 16px; color: #666; font-style: italic; }
+#editor h1 { font-family: 'Playfair Display', serif; font-size: 28px; margin-bottom: 12px; }
+#editor h2 { font-family: 'Playfair Display', serif; font-size: 22px; margin-bottom: 10px; }
+#editor h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+
+/* status */
+.statusbar {
+  padding: 8px 16px;
+  font-size: 12px; color: var(--dim);
+  background: var(--card);
+  border-top: 1px solid var(--line);
+  display: flex; align-items: center; gap: 16px;
+}
+.status-msg { transition: color .2s; }
+.status-msg.ok { color: var(--green); }
+.status-msg.warn { color: var(--warn); }
+.word-count { margin-left: auto; }
+
+/* ── print ───────────────────────────────── */
+@media print {
+  .topbar, .sidebar, .toolbar, .statusbar { display: none !important; }
+  .main { display: block; }
+  .canvas-wrap { padding: 0; background: #fff; }
+  #editor { box-shadow: none; max-width: 100%; padding: 0; }
+}
+
+/* ── responsive ─────────────────────────── */
+@media (max-width: 680px) {
+  .sidebar { display: none; }
+  .canvas-wrap { padding: 18px 12px; }
+  #editor { padding: 28px 20px; }
+  .brand-sub { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- topbar -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo-mark">A</div>
+      <div class="brand-text">
+        <div class="brand-name">Altmash Edition</div>
+        <div class="brand-sub">Professional Text → PDF</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button class="icon-btn" id="themeBtn">Light / Dark</button>
+    </div>
+  </header>
+
+  <div class="main">
+
+    <!-- sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-section">Document</div>
+
+      <div class="field">
+        <label>Title</label>
+        <input type="text" id="docTitle" value="My Document" spellcheck="false">
+      </div>
+
+      <div class="field">
+        <label>Page size</label>
+        <select id="pageSize">
+          <option value="a4" selected>A4</option>
+          <option value="letter">Letter</option>
+        </select>
+      </div>
+
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section">Export</div>
+
+      <button class="action-btn primary" id="exportBtn">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2v8M5 7l3 3 3-3M3 12h10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Download PDF
+      </button>
+
+      <button class="action-btn ghost" id="printBtn" style="margin-top:6px">
+        Print
+      </button>
+
+      <div class="sidebar-divider"></div>
+
+      <button class="action-btn ghost" id="clearBtn">
+        Clear document
+      </button>
+    </aside>
+
+    <!-- editor -->
+    <div class="editor-pane">
+      <div class="toolbar" id="toolbar">
+        <!-- Font -->
+        <select class="t-select" id="fontFam" title="Font family" style="min-width:116px">
+          <option value="lora">Lora</option>
+          <option value="playfair">Playfair Display</option>
+          <option value="georgia">Georgia</option>
+          <option value="times">Times New Roman</option>
+          <option value="inter">Inter</option>
+          <option value="arial">Arial</option>
+          <option value="courier">Courier New</option>
+        </select>
+        <!-- Size -->
+        <select class="t-select" id="fontSize" title="Font size" style="width:58px">
+          <option value="12">12</option>
+          <option value="14">14</option>
+          <option value="16" selected>16</option>
+          <option value="18">18</option>
+          <option value="20">20</option>
+          <option value="24">24</option>
+          <option value="28">28</option>
+          <option value="36">36</option>
+        </select>
+        <div class="t-sep"></div>
+        <!-- Heading -->
+        <select class="t-select" id="headingSel" title="Heading" style="width:76px">
+          <option value="p">Normal</option>
+          <option value="h1">Heading 1</option>
+          <option value="h2">Heading 2</option>
+          <option value="h3">Heading 3</option>
+        </select>
+        <div class="t-sep"></div>
+        <button class="t-btn" data-cmd="bold"      title="Bold"><b>B</b></button>
+        <button class="t-btn" data-cmd="italic"    title="Italic"><i>I</i></button>
+        <button class="t-btn" data-cmd="underline" title="Underline"><u>U</u></button>
+        <div class="t-sep"></div>
+        <button class="t-btn" data-cmd="justifyLeft"   title="Left">&#8676;</button>
+        <button class="t-btn" data-cmd="justifyCenter" title="Centre">&#8693;</button>
+        <button class="t-btn" data-cmd="justifyRight"  title="Right">&#8677;</button>
+        <button class="t-btn" data-cmd="justifyFull"   title="Justify">&#9636;</button>
+        <div class="t-sep"></div>
+        <button class="t-btn" data-cmd="insertUnorderedList" title="Bullet list">&#8226;</button>
+        <button class="t-btn" data-cmd="insertOrderedList"   title="Numbered list">1.</button>
+        <div class="t-sep"></div>
+        <button class="t-btn" data-cmd="indent"  title="Indent">&#x21E5;</button>
+        <button class="t-btn" data-cmd="outdent" title="Outdent">&#x21E4;</button>
+        <div class="t-sep"></div>
+        <input type="color" class="t-color" id="txtColor" value="#1a1a1a" title="Text colour">
+        <div class="t-sep"></div>
+        <button class="t-btn" data-cmd="undo" title="Undo">&#x21b6;</button>
+        <button class="t-btn" data-cmd="redo" title="Redo">&#x21b7;</button>
+      </div>
+
+      <div class="canvas-wrap">
+        <div id="editor"
+             contenteditable="true"
+             data-ph="Start writing, or paste your text here (Ctrl+V)…"
+             spellcheck="true"></div>
+      </div>
+
+      <div class="statusbar">
+        <span class="status-msg" id="statusMsg"></span>
+        <span class="word-count" id="wordCount">0 words</span>
+      </div>
+    </div>
+
+  </div><!-- .main -->
+</div><!-- .app -->
+
+<!-- ── jsPDF ──────────────────────────────── -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+(function () {
+'use strict';
+
+/* ── refs ─────────────────────────────────── */
+const editor    = document.getElementById('editor');
+const statusMsg = document.getElementById('statusMsg');
+const wordCount = document.getElementById('wordCount');
+const exportBtn = document.getElementById('exportBtn');
+
+/* ── status ──────────────────────────────── */
+let statusTimer;
+function setStatus(msg, kind) {
+  clearTimeout(statusTimer);
+  statusMsg.textContent = msg;
+  statusMsg.className = 'status-msg' + (kind ? ' ' + kind : '');
+  if (msg) statusTimer = setTimeout(() => {
+    statusMsg.textContent = '';
+    statusMsg.className = 'status-msg';
+  }, 4000);
+}
+
+/* ── word count ──────────────────────────── */
+function updateWordCount() {
+  const words = editor.innerText.trim().replace(/\s+/g, ' ').split(' ').filter(Boolean);
+  wordCount.textContent = words.length + ' word' + (words.length !== 1 ? 's' : '');
+}
+editor.addEventListener('input', updateWordCount);
+
+/* ── theme toggle ────────────────────────── */
+document.getElementById('themeBtn').addEventListener('click', () => {
+  const html = document.documentElement;
+  html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+});
+
+/* ── toolbar: format buttons ─────────────── */
+document.querySelectorAll('.t-btn[data-cmd]').forEach(btn => {
+  btn.addEventListener('mousedown', e => {
+    e.preventDefault(); // keep focus in editor
+    document.execCommand(btn.dataset.cmd, false, null);
+    updateActiveStates();
+  });
+});
+
+function updateActiveStates() {
+  ['bold','italic','underline'].forEach(cmd => {
+    const btn = document.querySelector(`.t-btn[data-cmd="${cmd}"]`);
+    if (btn) btn.classList.toggle('on', document.queryCommandState(cmd));
+  });
+}
+editor.addEventListener('keyup', updateActiveStates);
+editor.addEventListener('mouseup', updateActiveStates);
+
+/* ── font family ─────────────────────────── */
+const FONT_MAP = {
+  lora:     "'Lora', Georgia, serif",
+  playfair: "'Playfair Display', Georgia, serif",
+  georgia:  "Georgia, serif",
+  times:    "'Times New Roman', Times, serif",
+  inter:    "'Inter', system-ui, sans-serif",
+  arial:    "Arial, Helvetica, sans-serif",
+  courier:  "'Courier New', Courier, monospace"
+};
+document.getElementById('fontFam').addEventListener('change', e => {
+  editor.focus();
+  document.execCommand('fontName', false, FONT_MAP[e.target.value]);
+});
+
+/* ── font size ───────────────────────────── */
+document.getElementById('fontSize').addEventListener('change', e => {
+  editor.focus();
+  const px = e.target.value + 'px';
+  // execCommand fontSize only accepts 1-7; use CSS via span instead
+  document.execCommand('fontSize', false, '7');
+  document.querySelectorAll('font[size="7"]').forEach(node => {
+    node.removeAttribute('size');
+    node.style.fontSize = px;
+  });
+});
+
+/* ── heading ─────────────────────────────── */
+document.getElementById('headingSel').addEventListener('change', e => {
+  editor.focus();
+  const val = e.target.value;
+  document.execCommand('formatBlock', false, val === 'p' ? 'p' : val);
+  e.target.value = 'p'; // reset
+});
+
+/* ── text colour ─────────────────────────── */
+document.getElementById('txtColor').addEventListener('input', e => {
+  editor.focus();
+  document.execCommand('foreColor', false, e.target.value);
+});
+
+/* ── clean paste (no external styles) ───── */
+editor.addEventListener('paste', e => {
+  e.preventDefault();
+  const html  = e.clipboardData.getData('text/html');
+  const plain = e.clipboardData.getData('text/plain');
+  if (html) {
+    document.execCommand('insertHTML', false, stripStyles(html));
+  } else {
+    document.execCommand('insertText', false, plain);
+  }
+});
+function stripStyles(html) {
+  const div = document.createElement('div');
+  div.innerHTML = html;
+  div.querySelectorAll('[style]').forEach(n => n.removeAttribute('style'));
+  div.querySelectorAll('script,style,meta,link,head').forEach(n => n.remove());
+  div.querySelectorAll('*').forEach(n => {
+    [...n.attributes].forEach(a => { if (/^on/i.test(a.name)) n.removeAttribute(a.name); });
+    if (['span','font'].includes(n.tagName.toLowerCase()) && n.attributes.length === 0 && !n.style.cssText) {
+      n.replaceWith(...n.childNodes);
+    }
+  });
+  return div.innerHTML;
+}
+
+/* ── autosave ────────────────────────────── */
+let saveDebounce;
+editor.addEventListener('input', () => {
+  clearTimeout(saveDebounce);
+  saveDebounce = setTimeout(() => {
+    try { localStorage.setItem('ae_draft', editor.innerHTML); } catch(_) {}
+  }, 800);
+});
+try {
+  const d = localStorage.getItem('ae_draft');
+  if (d) { editor.innerHTML = d; updateWordCount(); }
+} catch(_) {}
+
+/* ── clear ───────────────────────────────── */
+document.getElementById('clearBtn').addEventListener('click', () => {
+  if (!editor.textContent.trim() || confirm('Clear the entire document?')) {
+    editor.innerHTML = '';
+    try { localStorage.removeItem('ae_draft'); } catch(_) {}
+    updateWordCount();
+  }
+});
+
+/* ── print ───────────────────────────────── */
+document.getElementById('printBtn').addEventListener('click', () => window.print());
+
+/* ══════════════════════════════════════════
+   PDF export — pure text-based, no canvas,
+   no hang. Works with jsPDF 2.x.
+════════════════════════════════════════════ */
+exportBtn.addEventListener('click', () => {
+  if (!editor.textContent.trim()) {
+    setStatus('Write or paste some text before exporting.', 'warn');
+    return;
+  }
+  exportBtn.disabled = true;
+  exportBtn.textContent = 'Building PDF…';
+  // Yield to browser so button visually updates, then run
+  requestAnimationFrame(() => setTimeout(() => {
+    try {
+      buildPdf();
+      setStatus('PDF saved — selectable text, ready to share.', 'ok');
+    } catch(err) {
+      console.error(err);
+      setStatus('Export failed — please try again.', 'warn');
+    } finally {
+      exportBtn.disabled = false;
+      exportBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2v8M5 7l3 3 3-3M3 12h10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg> Download PDF`;
+    }
+  }, 20));
+});
+
+/* ────────────────────────────────────────────
+   buildPdf()
+   Walks the editor DOM, resolves computed style
+   per block, and writes real text to jsPDF.
+   Fast, no screenshots, fully selectable PDF.
+──────────────────────────────────────────── */
+function buildPdf() {
+  const { jsPDF } = window.jspdf;
+  const fmt    = document.getElementById('pageSize').value;         // 'a4'|'letter'
+  const title  = document.getElementById('docTitle').value.trim() || 'document';
+
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'pt', format: fmt });
+  const PW  = doc.internal.pageSize.getWidth();
+  const PH  = doc.internal.pageSize.getHeight();
+  const MX  = 60, MT = 60, MB = 60;
+  const CW  = PW - MX * 2;
+
+  let cy = MT;
+  let liCounter = 0; // ordered list counter
+
+  function newPage() {
+    doc.addPage();
+    cy = MT;
+  }
+
+  function space(h) {
+    if (cy + h > PH - MB) newPage();
+  }
+
+  /* Convert hex/rgb string to [r,g,b] */
+  function parseColor(str) {
+    if (!str || str === 'transparent') return [26, 26, 26];
+    if (str.startsWith('#')) {
+      const s = str.slice(1);
+      const full = s.length === 3
+        ? s.split('').map(c => parseInt(c+c, 16))
+        : [parseInt(s.slice(0,2),16), parseInt(s.slice(2,4),16), parseInt(s.slice(4,6),16)];
+      return full;
+    }
+    const m = str.match(/\d+/g);
+    return m ? [+m[0], +m[1], +m[2]] : [26, 26, 26];
+  }
+
+  /* Walk a node and collect leaf runs */
+  function collectRuns(node, ctx, runs) {
+    if (node.nodeType === 3) {
+      const t = node.textContent;
+      if (t) runs.push({ text: t, ...ctx });
+      return;
+    }
+    if (node.nodeType !== 1) return;
+
+    const tag = node.tagName.toLowerCase();
+    const s   = node.style;
+
+    let c = { ...ctx };
+
+    // Tag-level
+    if (tag === 'b' || tag === 'strong') c.bold = true;
+    if (tag === 'i' || tag === 'em')     c.italic = true;
+    if (tag === 'u')                      c.underline = true;
+    if (tag === 'font') {
+      if (node.color) c.color = parseColor(node.color);
+    }
+    if (tag === 's' || tag === 'del')    c.strike = true;
+
+    // Inline style
+    if (s.fontWeight && (+s.fontWeight >= 600 || s.fontWeight === 'bold')) c.bold = true;
+    if (s.fontStyle === 'italic') c.italic = true;
+    if (s.textDecorationLine && s.textDecorationLine.includes('underline')) c.underline = true;
+    if (s.color) c.color = parseColor(s.color);
+    if (s.fontSize) {
+      const px = parseFloat(s.fontSize);
+      if (!isNaN(px)) c.size = Math.round(px * 0.75); // px→pt
+    }
+    if (s.fontFamily) {
+      const ff = s.fontFamily.toLowerCase();
+      if (ff.includes('courier') || ff.includes('mono')) c.mono = true;
+      else if (ff.includes('playfair') || ff.includes('lora') || ff.includes('georgia') || ff.includes('times')) c.serif = true;
+      else c.sans = true;
+    }
+
+    for (const child of node.childNodes) collectRuns(child, c, runs);
+  }
+
+  /* Resolve jsPDF font from run context */
+  function resolveFont(ctx) {
+    let family = ctx.mono ? 'courier' : (ctx.sans ? 'helvetica' : 'times');
+    let style  = 'normal';
+    if (ctx.bold && ctx.italic) style = 'bolditalic';
+    else if (ctx.bold)  style = 'bold';
+    else if (ctx.italic) style = 'italic';
+    return { family, style };
+  }
+
+  /* Write a line (already split) at cy */
+  function writeLine(text, ctx) {
+    const { family, style } = resolveFont(ctx);
+    doc.setFont(family, style);
+    doc.setFontSize(ctx.size || 11);
+    doc.setTextColor(...(ctx.color || [26, 26, 26]));
+
+    const lh = (ctx.size || 11) * 1.45;
+    space(lh);
+
+    let x = MX + (ctx.indent || 0);
+    const w = CW - (ctx.indent || 0);
+
+    if (ctx.align === 'center') {
+      const tw = doc.getTextWidth(text);
+      x = MX + (CW - tw) / 2;
+    } else if (ctx.align === 'right') {
+      const tw = doc.getTextWidth(text);
+      x = MX + CW - tw;
+    }
+
+    doc.text(text, x, cy);
+
+    if (ctx.underline) {
+      const tw = doc.getTextWidth(text);
+      doc.setLineWidth(0.5);
+      doc.line(x, cy + 1.5, x + tw, cy + 1.5);
+    }
+    if (ctx.strike) {
+      const tw = doc.getTextWidth(text);
+      doc.setLineWidth(0.5);
+      doc.line(x, cy - (ctx.size || 11) * 0.3, x + tw, cy - (ctx.size || 11) * 0.3);
+    }
+
+    cy += lh;
+  }
+
+  /* Render a paragraph-level node */
+  function renderBlock(node, listCtx) {
+    const tag = node.tagName ? node.tagName.toLowerCase() : '';
+    const s   = node.style || {};
+
+    // Nested list
+    if (tag === 'ul' || tag === 'ol') {
+      if (tag === 'ol') liCounter = 0;
+      for (const child of node.childNodes) {
+        if (child.tagName && child.tagName.toLowerCase() === 'li') {
+          renderBlock(child, { ordered: tag === 'ol', depth: (listCtx ? listCtx.depth || 0 : 0) + 1 });
+        }
+      }
+      cy += 4;
+      return;
+    }
+
+    // Heading
+    const isH1 = tag === 'h1';
+    const isH2 = tag === 'h2';
+    const isH3 = tag === 'h3';
+
+    let baseCtx = {
+      bold:   isH1 || isH2 || isH3,
+      size:   isH1 ? 22 : isH2 ? 17 : isH3 ? 14 : 11,
+      indent: listCtx ? (listCtx.depth || 1) * 16 : 0,
+      align:  s.textAlign || 'left'
+    };
+
+    // Collect text runs
+    const runs = [];
+    collectRuns(node, baseCtx, runs);
+
+    // Merge into single text block (simple — per-paragraph approach)
+    const fullText = runs.map(r => r.text).join('');
+    if (!fullText.trim()) { cy += (baseCtx.size || 11) * 0.6; return; }
+
+    // Use ctx from first meaningful run
+    const ctx = runs.find(r => r.text.trim()) || baseCtx;
+    const mergedCtx = { ...baseCtx, ...ctx };
+
+    // Bullet prefix
+    let prefix = '';
+    if (listCtx) {
+      if (listCtx.ordered) { liCounter++; prefix = liCounter + '.  '; }
+      else { prefix = '•   '; }
+    }
+
+    // Heading space before
+    if (isH1) cy += 10;
+    if (isH2) cy += 7;
+
+    const { family, style } = resolveFont(mergedCtx);
+    doc.setFont(family, style);
+    doc.setFontSize(mergedCtx.size || 11);
+
+    const lineW = CW - (mergedCtx.indent || 0);
+    const lines  = doc.splitTextToSize(prefix + fullText, lineW);
+
+    lines.forEach((line, i) => {
+      writeLine(line, { ...mergedCtx, indent: mergedCtx.indent + (i > 0 && prefix ? prefix.length * 2.5 : 0) });
+    });
+
+    // Heading space after
+    if (isH1 || isH2) cy += 6;
+
+    cy += (mergedCtx.size || 11) * 0.35; // paragraph gap
+  }
+
+  /* Walk top-level children of the editor */
+  function renderEditor() {
+    liCounter = 0;
+    const nodes = editor.childNodes;
+    if (nodes.length === 0) {
+      writeLine(editor.textContent || '', { size: 11, color: [26,26,26] });
+      return;
+    }
+    for (const node of nodes) {
+      if (node.nodeType === 3) {
+        // raw text
+        const t = node.textContent.trim();
+        if (t) writeLine(t, { size: 11, color: [26,26,26] });
+        continue;
+      }
+      const tag = node.tagName ? node.tagName.toLowerCase() : '';
+      if (tag === 'br') { cy += 11 * 0.8; continue; }
+      renderBlock(node, null);
+    }
+  }
+
+  // Add title metadata
+  doc.setProperties({ title });
+
+  renderEditor();
+
+  const safe = title.replace(/[^\w\s\-]/g, '').trim() || 'document';
+  doc.save(safe + '.pdf');
+}
+
+})();
+</script>
+</body>
+</html>
+
+</body></html>
